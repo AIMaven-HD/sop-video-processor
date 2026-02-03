@@ -22,10 +22,10 @@ jobs:
           pip install --upgrade pyinstaller
       - name: Build executable (Windows)
         if: matrix.os == 'windows-latest'
-        run: pyinstaller --onefile --windowed --collect-all tkinterdnd2 --name "SOP-Video-Processor" video_processor.py
+        run: pyinstaller --onefile --windowed --collect-all tkinterdnd2 --collect-all imageio_ffmpeg --name "SOP-Video-Processor" video_processor.py
       - name: Build app (macOS)
         if: matrix.os == 'macos-latest'
-        run: pyinstaller --onefile --windowed --collect-all tkinterdnd2 --name "SOP-Video-Processor" video_processor.py
+        run: pyinstaller --onefile --windowed --collect-all tkinterdnd2 --collect-all imageio_ffmpeg --name "SOP-Video-Processor" video_processor.py
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
