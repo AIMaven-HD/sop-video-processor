@@ -4,6 +4,7 @@ import os
 import subprocess
 from tkinter import messagebox
 import imageio_ffmpeg
+import stat
 
 class VideoProcessorApp:
     def __init__(self, root):
@@ -11,9 +12,14 @@ class VideoProcessorApp:
         self.root.title("SOP Video Processor")
         self.root.geometry("600x400")
         
-        # 1. GET FFMPEG (The robust way)
+        # 1. GET FFMPEG & FIX PERMISSIONS
         try:
             self.ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
+            
+            # CRITICAL FIX: Grant execute permission to the engine
+            st = os.stat(self.ffmpeg_path)
+            os.chmod(self.ffmpeg_path, st.st_mode | stat.S_IEXEC)
+            
             status_text = "System Ready"
             status_color = "green"
         except Exception as e:
@@ -40,9 +46,14 @@ class VideoProcessorApp:
 
     def process_video(self, file_path):
         try:
-            output_file = os.path.splitext(file_path)[0] + "_processed.mp4"
+            # Handle output filename
+            directory = os.path.dirname(file_path)
+            filename = os.path.basename(file_path)
+            name, ext = os.path.splitext(filename)
+            output_file = os.path.join(directory, f"{name}_processed.mp4")
+            
             # Simple process command
-            cmd = [self.ffmpeg_path, "-i", file_path, "-c", "copy", output_file]
+            cmd = [self.ffmpeg_path, "-y", "-i", file_path, "-c", "copy", output_file]
             
             # Windows hide console logic
             startupinfo = None
@@ -51,9 +62,9 @@ class VideoProcessorApp:
                 startupinfo.dwFlags |= subprocess.STARTUPINFO.dwFlags
             
             subprocess.run(cmd, check=True, startupinfo=startupinfo)
-            messagebox.showinfo("Success", f"Processed: {os.path.basename(file_path)}")
+            messagebox.showinfo("Success", f"Processed: {os.path.basename(output_file)}")
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", f"Failed: {str(e)}")
 
 if __name__ == "__main__":
     root = TkinterDnD.Tk()
