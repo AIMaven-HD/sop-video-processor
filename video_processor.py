@@ -6,16 +6,6 @@ import subprocess
 from tkinter import messagebox, filedialog
 import sys
 
-cd ~/SOP-Video-Processor
-cat << 'EOF' > video_processor.py
-import tkinter as tk
-from tkinterdnd2 import DND_FILES, TkinterDnD
-import os
-import shutil
-import subprocess
-from tkinter import messagebox, filedialog
-import sys
-
 def find_ffmpeg():
     ffmpeg_exe = "ffmpeg.exe" if os.name == 'nt' else "ffmpeg"
     if hasattr(sys, '_MEIPASS'):
